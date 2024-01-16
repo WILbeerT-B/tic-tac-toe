@@ -54,16 +54,28 @@ class Game
   def player_move(current_player)
     puts "Player #{current_player.number}. Choose a cell:"
     player_choice = gets.chomp.to_i
-    if is_cell_empty?(player_choice)
-      @count += 1
-      @board.update_board(player_choice, current_player.marker)
+    if is_input_valid?(player_choice)
+      if is_cell_empty?(player_choice)
+        @count += 1
+        @board.update_board(player_choice, current_player.marker)
+      else
+        puts "Cell #{player_choice} is not empty, please choose an empty cell."
+      end
     else
-      puts "Cell #{player_choice} is not empty, please choose an empty cell."
+      puts "Input #{player_choice} is not valid, please enter position 1-9."
     end
   end
 
   def is_cell_empty?(position)
     !(@board.cell[position-1] == "X" || @board.cell[position-1] == "O")
+  end
+
+  def is_input_valid?(input)
+    (1..9).include?(input)
+  end
+
+  def check_winner(position)
+    
   end
 
   def play_round
