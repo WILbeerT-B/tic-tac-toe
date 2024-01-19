@@ -26,13 +26,15 @@ class Board
     puts ""
   end
 
-  def update_board(position, marker)
-    @cell[position-1] = marker
+  def update_board(index, marker)
+    @cell[index-1] = marker
   end
 end
 
 
 class Game
+
+  WIN_COMBOS = [ [0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[6,4,2] ]
   attr_reader :message
 
   def initialize
@@ -52,12 +54,15 @@ class Game
   end
 
   def player_move(current_player)
-    puts "Player #{current_player.number}. Choose a cell:"
+    
+    print "Player #{current_player.number}. Choose a cell: "
     player_choice = gets.chomp.to_i
     if is_input_valid?(player_choice)
       if is_cell_empty?(player_choice)
         @count += 1
         @board.update_board(player_choice, current_player.marker)
+        check_winner()
+        #is_board_full?()
       else
         puts "Cell #{player_choice} is not empty, please choose an empty cell."
       end
@@ -66,17 +71,46 @@ class Game
     end
   end
 
-  def is_cell_empty?(position)
-    !(@board.cell[position-1] == "X" || @board.cell[position-1] == "O")
+  def is_cell_empty?(index)
+    !(@board.cell[index-1] == "X" || @board.cell[index-1] == "O")
   end
 
   def is_input_valid?(input)
     (1..9).include?(input)
   end
 
-  def check_winner(position)
-    
+  def check_winner()
+    WIN_COMBOS.each do |win_combo|
+      index_1 = win_combo[0]
+      index_2 = win_combo[1]
+      index_3 = win_combo[2]
+      position_1 = @board.cell[index_1]
+      position_2 = @board.cell[index_2]
+      position_3 = @board.cell[index_3]
+      #if @board.cell[win_combo[0]] == @board.cell[win_combo[1]] && @board.cell[win_combo[1]] == @board.cell[win_combo[2]] && @board.cell[win_combo[0]] != ""
+      if position_1 == position_2 && position_2 == position_3 && @board.cell[index_1] != ""
+        @count = 10
+        if @board.cell[win_combo[0]]  == "X"
+          puts "Player 1 wins!"
+          
+        elsif @board.cell[win_combo[0]]  == "O"
+          puts "Player 2 wins!"
+        end
+      end
+    end
   end
+
+  
+=begin 
+  def is_board_full?()
+    @board.cell[0..8].all? { |c| %w[X O].include?(c) }
+  end
+
+  def is_draw?()
+    if is_board_full?() && is_winner?()
+    end
+  end
+=end
 
   def play_round
     puts @message
