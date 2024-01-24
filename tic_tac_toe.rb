@@ -63,6 +63,9 @@ class Game
         @board.update_board(player_choice, current_player.marker)
         check_winner()
         #is_board_full?()
+        if is_draw?()
+          puts "Game is draw!"
+        end
       else
         puts "Cell #{player_choice} is not empty, please choose an empty cell."
       end
@@ -80,14 +83,13 @@ class Game
   end
 
   def check_winner()
-    WIN_COMBOS.each do |win_combo|
+    WIN_COMBOS.any? do |win_combo|
       index_1 = win_combo[0]
       index_2 = win_combo[1]
       index_3 = win_combo[2]
       position_1 = @board.cell[index_1]
       position_2 = @board.cell[index_2]
       position_3 = @board.cell[index_3]
-      #if @board.cell[win_combo[0]] == @board.cell[win_combo[1]] && @board.cell[win_combo[1]] == @board.cell[win_combo[2]] && @board.cell[win_combo[0]] != ""
       if position_1 == position_2 && position_2 == position_3 && @board.cell[index_1] != ""
         @count = 10
         if @board.cell[win_combo[0]]  == "X"
@@ -96,21 +98,18 @@ class Game
         elsif @board.cell[win_combo[0]]  == "O"
           puts "Player 2 wins!"
         end
+        true
       end
     end
   end
 
-  
-=begin 
   def is_board_full?()
     @board.cell[0..8].all? { |c| %w[X O].include?(c) }
   end
 
   def is_draw?()
-    if is_board_full?() && is_winner?()
-    end
+    is_board_full?() && !check_winner()
   end
-=end
 
   def play_round
     puts @message
